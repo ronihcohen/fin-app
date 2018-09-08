@@ -6,6 +6,7 @@ import { Router, Route, Switch } from "react-router-dom";
 import "assets/css/material-dashboard-react.css?v=1.4.1";
 
 import indexRoutes from "routes/index.jsx";
+import Login from "views/Login/Login.jsx";
 
 import { Provider } from "react-redux";
 import { createStore, combineReducers, compose } from "redux";
@@ -14,6 +15,10 @@ import firebase from "firebase";
 import { reduxFirestore, firestoreReducer } from "redux-firestore"; // <- needed if using firestore
 import "firebase/firestore"; // <- needed if using firestore
 // import 'firebase/functions' // <- needed if using httpsCallable
+
+import { connect } from "react-redux";
+import { firestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
+import { Redirect } from "react-router-dom";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCoQw641BRZpmyeDQ-wkHU2o9tJbwKBbKk",
@@ -26,8 +31,8 @@ const firebaseConfig = {
 
 // react-redux-firebase config
 const rrfConfig = {
-  userProfile: "users",
-  useFirestoreForProfile: true // Firestore for Profile instead of Realtime DB
+  // userProfile: "users",
+  // useFirestoreForProfile: true // Firestore for Profile instead of Realtime DB
 };
 
 // Initialize firebase instance
@@ -55,13 +60,35 @@ const store = createStoreWithFirebase(rootReducer, initialState);
 
 const hist = createBrowserHistory();
 
+const PrivateRoute = compose(
+  firestoreConnect(), // withFirebase can also be used
+  connect(({ firebase: { auth } }) => ({ auth }))
+)(({ auth, component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    component={props =>
+      isLoaded(auth) && !isEmpty(auth) ? (
+        <Component {...props} />
+      ) : (
+        <Redirect to="/login" />
+      )
+    }
+  />
+));
+
 ReactDOM.render(
   <Provider store={store}>
     <Router history={hist}>
       <Switch>
+        <Route path="/login" component={Login} />
+
         {indexRoutes.map((prop, key) => {
           return (
-            <Route path={prop.path} component={prop.component} key={key} />
+            <PrivateRoute
+              path={prop.path}
+              component={prop.component}
+              key={key}
+            />
           );
         })}
       </Switch>

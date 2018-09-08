@@ -20,6 +20,10 @@ import Button from "components/CustomButtons/Button.jsx";
 
 import headerLinksStyle from "assets/jss/material-dashboard-react/components/headerLinksStyle";
 
+import { compose } from "redux";
+import { connect } from "react-redux";
+import { firestoreConnect } from "react-redux-firebase";
+
 class HeaderLinks extends React.Component {
   state = {
     open: false
@@ -36,8 +40,14 @@ class HeaderLinks extends React.Component {
     this.setState({ open: false });
   };
 
+  handleLogout = () => {
+    const { firebase } = this.props;
+    firebase.logout();
+    this.setState({ open: false });
+  };
+
   render() {
-    const { classes } = this.props;
+    const { classes, auth } = this.props;
     const { open } = this.state;
     return (
       <div>
@@ -138,10 +148,11 @@ class HeaderLinks extends React.Component {
                         Another Notification
                       </MenuItem>
                       <MenuItem
-                        onClick={this.handleClose}
+                        onClick={this.handleLogout}
                         className={classes.dropdownItem}
                       >
-                        Another One
+                        Logout{" "}
+                        {auth.displayName && <span>({auth.displayName})</span>}
                       </MenuItem>
                     </MenuList>
                   </ClickAwayListener>
@@ -167,4 +178,8 @@ class HeaderLinks extends React.Component {
   }
 }
 
-export default withStyles(headerLinksStyle)(HeaderLinks);
+export default compose(
+  withStyles(headerLinksStyle),
+  firestoreConnect(), // withFirebase can also be used
+  connect(({ firebase: { auth } }) => ({ auth }))
+)(HeaderLinks);

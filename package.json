@@ -19,6 +19,7 @@
     "react": "16.4.1",
     "react-chartist": "0.13.1",
     "react-dom": "16.4.1",
+    "react-google-button": "^0.5.3",
     "react-google-maps": "9.4.5",
     "react-redux": "^5.0.7",
     "react-redux-firebase": "^2.1.8",

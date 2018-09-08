@@ -31,10 +31,10 @@ const firebaseConfig = {
 
 // react-redux-firebase config
 const rrfConfig = {
-  // userProfile: "users",
-  // useFirestoreForProfile: true // Firestore for Profile instead of Realtime DB
+  attachAuthIsReady: true // attaches auth is ready promise to store
+  // userProfile: 'users', // firebase root where user profiles are stored
+  // firebaseStateName: 'firebase' // should match the reducer name ('firebase' is default)
 };
-
 // Initialize firebase instance
 firebase.initializeApp(firebaseConfig);
 
@@ -76,23 +76,25 @@ const PrivateRoute = compose(
   />
 ));
 
-ReactDOM.render(
-  <Provider store={store}>
-    <Router history={hist}>
-      <Switch>
-        <Route path="/login" component={Login} />
+store.firebaseAuthIsReady.then(() => {
+  ReactDOM.render(
+    <Provider store={store}>
+      <Router history={hist}>
+        <Switch>
+          <Route path="/login" component={Login} />
 
-        {indexRoutes.map((prop, key) => {
-          return (
-            <PrivateRoute
-              path={prop.path}
-              component={prop.component}
-              key={key}
-            />
-          );
-        })}
-      </Switch>
-    </Router>
-  </Provider>,
-  document.getElementById("root")
-);
+          {indexRoutes.map((prop, key) => {
+            return (
+              <PrivateRoute
+                path={prop.path}
+                component={prop.component}
+                key={key}
+              />
+            );
+          })}
+        </Switch>
+      </Router>
+    </Provider>,
+    document.getElementById("root")
+  );
+});

@@ -91,20 +91,14 @@ class AddRecordForm extends Component {
     this.titleInput.focus();
   }
 
-  setBalanceDoc(balanceRef) {
+  setBalanceDoc(balanceRef, data) {
     const {
       data: { title, amount, category }
     } = this.state;
     const { firebase } = this.props;
 
     balanceRef
-      .set({
-        records: firebase.firestore.FieldValue.arrayUnion({
-          title: title,
-          amount: amount,
-          category: category
-        })
-      })
+      .set(data)
       .then(() => {
         this.cleanState();
       })
@@ -118,20 +112,21 @@ class AddRecordForm extends Component {
       data: { title, amount, category }
     } = this.state;
     const { firebase } = this.props;
-
-    balanceRef
-      .update({
-        records: firebase.firestore.FieldValue.arrayUnion({
-          title: title,
-          amount: amount,
-          category: category
-        })
+    const data = {
+      records: firebase.firestore.FieldValue.arrayUnion({
+        title: title,
+        amount: amount,
+        category: category,
+        date: new Date()
       })
+    };
+    balanceRef
+      .update(data)
       .then(() => {
         this.cleanState();
       })
       .catch(error => {
-        this.setBalanceDoc(balanceRef);
+        this.setBalanceDoc(balanceRef, data);
       });
   }
 
@@ -161,12 +156,12 @@ class AddRecordForm extends Component {
       <form onSubmit={e => this.handleSubmit(e)}>
         <Card>
           <CardHeader color="primary">
-            <h4 className={classes.cardTitleWhite}>Edit Profile</h4>
-            <p className={classes.cardCategoryWhite}>Complete your profile</p>
+            <h4 className={classes.cardTitleWhite}>Add new record</h4>
+            <p className={classes.cardCategoryWhite} />
           </CardHeader>
           <CardBody>
             <GridContainer>
-              <GridItem xs={12} sm={12} md={3}>
+              <GridItem xs={12} sm={12} md={4}>
                 <CustomInput
                   labelText="Ttile"
                   id="title"
@@ -182,7 +177,7 @@ class AddRecordForm extends Component {
                   error={validation.title}
                 />
               </GridItem>
-              <GridItem xs={12} sm={12} md={3}>
+              <GridItem xs={12} sm={12} md={4}>
                 <CustomInput
                   labelText="Category"
                   id="category"

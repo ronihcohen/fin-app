@@ -10,6 +10,8 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { firestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
 
+import moment from "moment";
+
 const styles = {
   cardCategoryWhite: {
     color: "rgba(255,255,255,.62)",
@@ -33,10 +35,8 @@ const BalanceTable = ({ auth, balance, classes }) => {
   return (
     <Card>
       <CardHeader color="warning">
-        <h4 className={classes.cardTitleWhite}>Employees Stats</h4>
-        <p className={classes.cardCategoryWhite}>
-          New employees on 15th September, 2016
-        </p>
+        <h4 className={classes.cardTitleWhite}>Balance</h4>
+        <p className={classes.cardCategoryWhite} />
       </CardHeader>
       <CardBody>
         {!isLoaded(balance) ? (
@@ -46,10 +46,17 @@ const BalanceTable = ({ auth, balance, classes }) => {
         ) : (
           <Table
             tableHeaderColor="warning"
-            tableHead={["Title", "Catagory", "Amount"]}
-            tableData={balance[auth.uid].records.map(record =>
-              Object.values(record).reverse()
-            )}
+            tableHead={["Title", "Category", "Amount", "Date"]}
+            tableData={balance[auth.uid].records
+              .reverse()
+              .map(record => [
+                record.title,
+                record.category,
+                record.amount,
+                record.date
+                  ? moment(record.date.toDate()).format("DD-MM HH:mm")
+                  : null
+              ])}
           />
         )}
       </CardBody>
@@ -62,7 +69,12 @@ export default compose(
     balance: data.balance,
     auth
   })),
-  firestoreConnect(props => [{ collection: "balance", doc: props.auth.uid }]),
+  firestoreConnect(props => [
+    {
+      collection: "balance",
+      doc: props.auth.uid
+    }
+  ]),
 
   withStyles(styles)
 )(BalanceTable);

@@ -88,6 +88,7 @@ class AddRecordForm extends Component {
       },
       validation: { form: true }
     });
+    this.titleInput.focus();
   }
 
   setBalanceDoc(balanceRef) {
@@ -134,12 +135,20 @@ class AddRecordForm extends Component {
       });
   }
 
-  handleClick() {
+  handleSubmit = e => {
+    e.preventDefault();
     const { firestore, auth } = this.props;
+    const {
+      validation: { form }
+    } = this.state;
+    if (form) {
+      return;
+    }
+
     const balanceRef = firestore.collection("balance").doc(auth.uid);
 
     this.updateBalanceDoc(balanceRef);
-  }
+  };
 
   render() {
     const { classes } = this.props;
@@ -149,7 +158,7 @@ class AddRecordForm extends Component {
     } = this.state;
 
     return (
-      <div>
+      <form onSubmit={e => this.handleSubmit(e)}>
         <Card>
           <CardHeader color="primary">
             <h4 className={classes.cardTitleWhite}>Edit Profile</h4>
@@ -166,7 +175,9 @@ class AddRecordForm extends Component {
                   }}
                   inputProps={{
                     onChange: this.handleChange("title"),
-                    value: title
+                    value: title,
+                    autoFocus: true,
+                    inputRef: el => (this.titleInput = el)
                   }}
                   error={validation.title}
                 />
@@ -202,16 +213,12 @@ class AddRecordForm extends Component {
             </GridContainer>
           </CardBody>
           <CardFooter>
-            <Button
-              onClick={e => this.handleClick()}
-              color="primary"
-              disabled={validation.form}
-            >
+            <Button type="submit" color="primary" disabled={validation.form}>
               Add
             </Button>
           </CardFooter>
         </Card>
-      </div>
+      </form>
     );
   }
 }

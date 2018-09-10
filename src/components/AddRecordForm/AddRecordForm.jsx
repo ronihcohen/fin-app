@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
-import InputLabel from "@material-ui/core/InputLabel";
+
 // core components
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
@@ -103,73 +103,67 @@ class AddRecordForm extends Component {
 
     return (
       <div>
-        <GridContainer>
-          <GridItem xs={12} sm={12} md={8}>
-            <Card>
-              <CardHeader color="primary">
-                <h4 className={classes.cardTitleWhite}>Edit Profile</h4>
-                <p className={classes.cardCategoryWhite}>
-                  Complete your profile
-                </p>
-              </CardHeader>
-              <CardBody>
-                <GridContainer>
-                  <GridItem xs={12} sm={12} md={3}>
-                    <CustomInput
-                      labelText="Ttile"
-                      id="title"
-                      formControlProps={{
-                        fullWidth: true
-                      }}
-                      inputProps={{
-                        onChange: this.handleChange("title"),
-                        value: title
-                      }}
-                    />
-                  </GridItem>
-                  <GridItem xs={12} sm={12} md={3}>
-                    <CustomInput
-                      labelText="Category"
-                      id="category"
-                      formControlProps={{
-                        fullWidth: true
-                      }}
-                      inputProps={{
-                        onChange: this.handleChange("category"),
-                        value: category
-                      }}
-                    />
-                  </GridItem>
-                  <GridItem xs={12} sm={12} md={3}>
-                    <CustomInput
-                      labelText="Amount"
-                      id="amount"
-                      formControlProps={{
-                        fullWidth: true
-                      }}
-                      inputProps={{
-                        onChange: this.handleChange("amount"),
-                        value: amount
-                      }}
-                    />
-                  </GridItem>
-                </GridContainer>
-              </CardBody>
-              <CardFooter>
-                <Button onClick={e => this.handleClick()} color="primary">
-                  Add
-                </Button>
-              </CardFooter>
-            </Card>
-          </GridItem>
-        </GridContainer>
+        <Card>
+          <CardHeader color="primary">
+            <h4 className={classes.cardTitleWhite}>Edit Profile</h4>
+            <p className={classes.cardCategoryWhite}>Complete your profile</p>
+          </CardHeader>
+          <CardBody>
+            <GridContainer>
+              <GridItem xs={12} sm={12} md={3}>
+                <CustomInput
+                  labelText="Ttile"
+                  id="title"
+                  formControlProps={{
+                    fullWidth: true
+                  }}
+                  inputProps={{
+                    onChange: this.handleChange("title"),
+                    value: title
+                  }}
+                />
+              </GridItem>
+              <GridItem xs={12} sm={12} md={3}>
+                <CustomInput
+                  labelText="Category"
+                  id="category"
+                  formControlProps={{
+                    fullWidth: true
+                  }}
+                  inputProps={{
+                    onChange: this.handleChange("category"),
+                    value: category
+                  }}
+                />
+              </GridItem>
+              <GridItem xs={12} sm={12} md={3}>
+                <CustomInput
+                  labelText="Amount"
+                  id="amount"
+                  formControlProps={{
+                    fullWidth: true
+                  }}
+                  inputProps={{
+                    onChange: this.handleChange("amount"),
+                    value: amount
+                  }}
+                />
+              </GridItem>
+            </GridContainer>
+          </CardBody>
+          <CardFooter>
+            <Button onClick={e => this.handleClick()} color="primary">
+              Add
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
     );
   }
 }
 
 export default compose(
-  firestoreConnect(["balance"]),
+  firestoreConnect(),
   connect(state => ({
     auth: state.firebase.auth
   })),

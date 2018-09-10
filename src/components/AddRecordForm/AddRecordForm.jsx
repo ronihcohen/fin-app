@@ -38,20 +38,62 @@ const styles = {
 class AddRecordForm extends Component {
   constructor(props) {
     super(props);
-    this.state = { title: "", amount: "", category: "" };
+    this.state = {
+      data: {
+        title: "",
+        amount: "",
+        category: ""
+      },
+      validation: { form: true }
+    };
   }
+
+  checkFormValidation(name) {
+    const { data, validation } = this.state;
+
+    let newValidation = { ...validation, form: false };
+    for (let fieldName in data) {
+      let filedIntValue = parseInt(data[fieldName]);
+      let fieldStatus = isNaN(filedIntValue)
+        ? data[fieldName].length === 0
+        : filedIntValue < 1;
+
+      if (name === fieldName) {
+        newValidation[fieldName] = fieldStatus;
+      }
+      newValidation.form = newValidation.form || fieldStatus;
+    }
+
+    this.setState({ validation: newValidation });
+  }
+
   handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value
-    });
+    let { data } = this.state;
+    data[name] = event.target.value;
+
+    this.setState(
+      {
+        data: data
+      },
+      () => this.checkFormValidation(name)
+    );
   };
 
   cleanState() {
-    this.setState({ title: "", amount: "", category: "" });
+    this.setState({
+      data: {
+        title: "",
+        amount: "",
+        category: ""
+      },
+      validation: { form: true }
+    });
   }
 
   setBalanceDoc(balanceRef) {
-    const { title, amount, category } = this.state;
+    const {
+      data: { title, amount, category }
+    } = this.state;
     const { firebase } = this.props;
 
     balanceRef
@@ -71,7 +113,9 @@ class AddRecordForm extends Component {
   }
 
   updateBalanceDoc(balanceRef) {
-    const { title, amount, category } = this.state;
+    const {
+      data: { title, amount, category }
+    } = this.state;
     const { firebase } = this.props;
 
     balanceRef
@@ -99,7 +143,10 @@ class AddRecordForm extends Component {
 
   render() {
     const { classes } = this.props;
-    const { title, amount, category } = this.state;
+    const {
+      data: { title, amount, category },
+      validation
+    } = this.state;
 
     return (
       <div>
@@ -121,6 +168,7 @@ class AddRecordForm extends Component {
                     onChange: this.handleChange("title"),
                     value: title
                   }}
+                  error={validation.title}
                 />
               </GridItem>
               <GridItem xs={12} sm={12} md={3}>
@@ -134,6 +182,7 @@ class AddRecordForm extends Component {
                     onChange: this.handleChange("category"),
                     value: category
                   }}
+                  error={validation.category}
                 />
               </GridItem>
               <GridItem xs={12} sm={12} md={3}>
@@ -145,14 +194,19 @@ class AddRecordForm extends Component {
                   }}
                   inputProps={{
                     onChange: this.handleChange("amount"),
-                    value: amount
+                    value: amount,
+                    type: "number"
                   }}
                 />
               </GridItem>
             </GridContainer>
           </CardBody>
           <CardFooter>
-            <Button onClick={e => this.handleClick()} color="primary">
+            <Button
+              onClick={e => this.handleClick()}
+              color="primary"
+              disabled={validation.form}
+            >
               Add
             </Button>
           </CardFooter>

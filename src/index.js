@@ -31,10 +31,11 @@ const firebaseConfig = {
 
 // react-redux-firebase config
 const rrfConfig = {
-  attachAuthIsReady: true // attaches auth is ready promise to store
-  // userProfile: 'users', // firebase root where user profiles are stored
-  // firebaseStateName: 'firebase' // should match the reducer name ('firebase' is default)
+  attachAuthIsReady: true, // attaches auth is ready promise to store
+  userProfile: "users",
+  useFirestoreForProfile: true // Firestore for Profile instead of Realtime DB
 };
+
 // Initialize firebase instance
 firebase.initializeApp(firebaseConfig);
 
